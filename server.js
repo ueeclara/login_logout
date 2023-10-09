@@ -2,6 +2,7 @@ const express = require('express');
 const { Pool } = require ('pg');
 
 const app = express();
+app.use(express.json());
 
 // conexão com o PostgreSQL
 const pool = new Pool({
