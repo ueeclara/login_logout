@@ -12,7 +12,7 @@ if (storedUsers) {
 // Função para carregar e exibir a lista de usuários da API
 async function loadUsers() {
     try {
-        const response = await fetch('sua-url-de-api'); // Substitua 'sua-url-de-api' pela URL correta
+        const response = await fetch('https://6526a720917d673fd76cb7d2.mockapi.io/users/id/${userId}');
         if (!response.ok) {
             throw new Error('Erro ao carregar usuários da API');
         }
@@ -46,7 +46,7 @@ async function addUser() {
     const email = emailInput.value;
     if (name && email) {
         try {
-            const response = await fetch('sua-url-de-api', {
+            const response = await fetch('https://6526a720917d673fd76cb7d2.mockapi.io/users/id/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ async function editUser(userId) {
         return;
     }
     try {
-        const response = await fetch(`sua-url-de-api/${userId}`, {
+        const response = await fetch(`https://6526a720917d673fd76cb7d2.mockapi.io/users/id/${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ async function editUser(userId) {
 // Função para excluir um usuário na API
 async function deleteUser(userId) {
     try {
-        const response = await fetch(`sua-url-de-api/${userId}`, {
+        const response = await fetch(`https://6526a720917d673fd76cb7d2.mockapi.io/users/id/${userId}`, {
             method: 'DELETE',
         });
         if (!response.ok) {
