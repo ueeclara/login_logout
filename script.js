@@ -1,30 +1,11 @@
+let users = [];
+
 const nameInput = document.getElementById('name');
 const emailInput = document.getElementById('email');
 const addUserButton = document.getElementById('add-user');
 const userList = document.getElementById('user-list');
 
-// Carregar dados do Local Storage, se disponível
-const storedUsers = JSON.parse(localStorage.getItem('users'));
-if (storedUsers) {
-    users = storedUsers;
-}
-
-// Função para carregar e exibir a lista de usuários da API
-async function loadUsers() {
-    try {
-        const response = await fetch('https://6526a720917d673fd76cb7d2.mockapi.io/users/id/${userId}');
-        if (!response.ok) {
-            throw new Error('Erro ao carregar usuários da API');
-        }
-        const users = await response.json();
-        displayUsers(users);
-    } catch (error) {
-        console.error('Erro ao carregar usuários:', error);
-    }
-}
-
-// Função para exibir a lista de usuários
-function displayUsers(users) {
+function displayUsers() {
     userList.innerHTML = '';
     users.forEach((user, index) => {
         const row = document.createElement('tr');
@@ -32,82 +13,50 @@ function displayUsers(users) {
             <td>${user.name}</td>
             <td>${user.email}</td>
             <td>
-                <button class="edit" onclick="editUser(${user.id})">Editar</button>
-                <button class="delete" onclick="deleteUser(${user.id})">Excluir</button>
+                <button class="edit" onclick="editUser(${index})">Editar</button>
+                <button class="delete" onclick="deleteUser(${index})">Excluir</button>
             </td>
         `;
         userList.appendChild(row);
     });
 }
 
-// Função para adicionar um novo usuário na API
-async function addUser() {
+// Função para adicionar um novo usuário
+function addUser() {
     const name = nameInput.value;
     const email = emailInput.value;
     if (name && email) {
-        try {
-            const response = await fetch('https://6526a720917d673fd76cb7d2.mockapi.io/users/id/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name, email }),
-            });
-            if (!response.ok) {
-                throw new Error('Erro ao adicionar usuário à API');
-            }
-            loadUsers(); // Recarregar a lista de usuários após a adição
-            nameInput.value = '';
-            emailInput.value = '';
-        } catch (error) {
-            console.error('Erro ao adicionar usuário:', error);
-        }
-    }
-}
-
-// Função para editar um usuário na API
-async function editUser(userId) {
-    const name = nameInput.value;
-    const email = emailInput.value;
-    if (!name || !email) {
-        return;
-    }
-    try {
-        const response = await fetch(`https://6526a720917d673fd76cb7d2.mockapi.io/users/id/${userId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ name, email }),
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao editar usuário na API');
-        }
-        loadUsers(); // Recarregar a lista de usuários após a edição
+        users.push({ name, email });
+        displayUsers();
         nameInput.value = '';
         emailInput.value = '';
-    } catch (error) {
-        console.error('Erro ao editar usuário:', error);
     }
 }
 
-// Função para excluir um usuário na API
-async function deleteUser(userId) {
-    try {
-        const response = await fetch(`https://6526a720917d673fd76cb7d2.mockapi.io/users/id/${userId}`, {
-            method: 'DELETE',
-        });
-        if (!response.ok) {
-            throw new Error('Erro ao excluir usuário na API');
-        }
-        loadUsers(); // Recarregar a lista de usuários após a exclusão
-    } catch (error) {
-        console.error('Erro ao excluir usuário:', error);
-    }
+// Função para editar um usuário
+function editUser(index) {
+    const user = users[index];
+    nameInput.value = user.name;
+    emailInput.value = user.email;
+
+    addUserButton.innerHTML = 'Salvar Edição';
+
+    addUserButton.onclick = function () {
+        user.name = nameInput.value;
+        user.email = emailInput.value;
+        displayUsers();
+        nameInput.value = '';
+        emailInput.value = '';
+        addUserButton.innerHTML = 'Adicionar Usuário';
+        addUserButton.onclick = addUser;
+    };
 }
 
-// Adicione manipuladores de eventos
+function deleteUser(index) {
+    users.splice(index, 1);
+    displayUsers();
+}
 addUserButton.onclick = addUser;
 
-// Carregar a lista de usuários inicialmente
-loadUsers();
+
+displayUsers();
